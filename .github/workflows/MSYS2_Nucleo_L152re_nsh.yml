@@ -74,8 +74,8 @@ jobs:
       - name: Install arm toolchain for Windows
         run: |
            curl -L https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip -o arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
-           unzip arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
-           ## mkdir -p /opt/nuttxenv/usr
+           unzip -po arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
+           mkdir -p /opt/nuttxenv/usr
            cp -ar arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi/* /opt/nuttxenv/usr
            rm -rf arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
            ls -a /opt/nuttxenv/usr
