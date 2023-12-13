@@ -82,11 +82,12 @@ jobs:
            
       - name: Create PATH environment setup support script
         run: |
-           mkdir -p nuttxenv
-           echo "#!/usr/bin/env bash" > nuttxenv/setup
-           echo "PATH=/opt/usr/bin:"'${PATH}' >> nuttxenv/setup
-           echo "export PATH" >> nuttxenv/setup
-          
+           ##mkdir -p nuttxenv
+           ##echo "#!/usr/bin/env bash" > nuttxenv/setup
+           ##echo "PATH=/opt/usr/bin:"'${PATH}' >> nuttxenv/setup
+           ##echo "export PATH" >> nuttxenv/setup
+           rm -f ~/.bash_profile
+           echo "export PATH='/opt/usr/bin:$PATH'" > ~/.bash_profile
       - name: Checkout Source Files
         run: |
           echo 'Checkout Source Files'
