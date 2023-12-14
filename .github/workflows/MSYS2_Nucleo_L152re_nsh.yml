@@ -104,8 +104,9 @@ jobs:
         run: |
           echo 'Build'
           ## source nuttxenv/setup
-          rm -f ~/.bash_profile
-          echo "export PATH=/opt/usr/bin:'${PATH}'" >>  ~/.bash_profile
+          ## rm -f ~/.bash_profile
+          ## echo "export PATH=/opt/usr/bin:'${PATH}'" >>  ~/.bash_profile
+          export PATH=$PATH:/opt/usr/bin
           env
           
           ## Move to nuttx
