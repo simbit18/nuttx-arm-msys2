@@ -80,14 +80,14 @@ jobs:
            rm -rf arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
            ls -a /opt/nuttxenv/usr
            
-      - name: Create PATH environment setup support script
+      - name: Create PATH environment arm support script
         run: |
-           ##mkdir -p nuttxenv
-           ##echo "#!/usr/bin/env bash" > nuttxenv/setup
-           ##echo "PATH=/opt/usr/bin:"'${PATH}' >> nuttxenv/setup
-           ##echo "export PATH" >> nuttxenv/setup
+           mkdir -p nuttxenv
+           echo "#!/usr/bin/env bash" > nuttxenv/arm
+           echo "PATH=/opt/nuttxenv/usr/bin:"'${PATH}' >> nuttxenv/arm
+           echo "export PATH" >> nuttxenv/arm
            ##rm -f ~/.bash_profile
-           ## echo "export PATH='/opt/usr/bin:$PATH'" > ~/.bash_profile
+           ## echo "export PATH='/opt/nuttxenv/usr/bin:$PATH'" > ~/.bash_profile
       - name: Checkout Source Files
         run: |
           echo 'Checkout Source Files'
@@ -103,10 +103,9 @@ jobs:
       - name: Build
         run: |
           echo 'Build'
-          ## source nuttxenv/setup
-          ## rm -f ~/.bash_profile
-          ## echo "export PATH=/opt/usr/bin:'${PATH}'" >>  ~/.bash_profile
-          export PATH=$PATH:/opt/nuttxenv/usr/bin
+          source nuttxenv/arm
+          
+          ## export PATH=$PATH:/opt/nuttxenv/usr/bin
           env
           
           ## Move to nuttx
