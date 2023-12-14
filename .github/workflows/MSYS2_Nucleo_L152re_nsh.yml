@@ -8,6 +8,9 @@ on:
   push:
     paths:
       - '.github/workflows/MSYS2_Nucleo_L152re_nsh.yml'
+env:
+   ARM_URL: https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/
+   ARM_NAME: arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
 
 jobs:
   nuttx-msys2:
@@ -73,11 +76,18 @@ jobs:
           ls -a
       - name: Install arm toolchain for Windows
         run: |
-           curl -L https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip -o arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
-           unzip -qo arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
+           ## curl -L https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip -o arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
+           ## unzip -qo arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
+           ## cp -ar arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi/* /opt/nuttxenv/usr
+           ## rm -rf arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
+           
+           curl -L ${{ env.ARM_URL }}${{ env.ARM_NAME }}.zip -o ${{ env.ARM_NAME }}.zip
+           unzip -qo ${{ env.ARM_NAME }}.zip
            mkdir -p /opt/nuttxenv/usr
-           cp -ar arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi/* /opt/nuttxenv/usr
-           rm -rf arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
+          
+           cp -ar ${{ env.ARM_NAME }}/* /opt/nuttxenv/usr
+           rm -rf ${{ env.ARM_NAME }}
+           rm ${{ env.ARM_NAME }}.zip           
            ls -a /opt/nuttxenv/usr
            
       - name: Create PATH environment arm support script
