@@ -126,7 +126,7 @@ jobs:
           arm-none-eabi-c++ --version
 
           ## Configure the build
-          ./tools/configure.sh -g nucleo-f4x1re:f411-nsh
+          ./tools/configure.sh -g nucleo-f411re:nsh
 
           mkdir nuttxmsys2
 
