@@ -56,7 +56,7 @@ jobs:
           echo 'Install kconfig-frontends'
           git clone --depth 1 https://github.com/patacongo/tools nuttx-tools
           cd nuttx-tools/kconfig-frontends
-          ./configure --prefix="${NUTTXTOOLS}"/kconfig-frontends \
+          ./configure --prefix=/opt/nuttxenv/usr \
           --disable-kconfig --disable-nconf --disable-qconf \
           --disable-gconf --disable-mconf --disable-static \
           --disable-shared --disable-L10n
