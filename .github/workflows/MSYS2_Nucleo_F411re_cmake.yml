@@ -127,7 +127,7 @@ jobs:
 
           ## Configure the build
           # ./tools/configure.sh -g nucleo-f411re:nsh
-          cmake -B build -DBOARD_CONFIG=raspberrypi-pico:nsh -GNinja
+          cmake -B build -DBOARD_CONFIG=nucleo-f411re:nsh -GNinja
           
           cmake --build build
           
