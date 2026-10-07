@@ -63,6 +63,7 @@ jobs:
           # ./configure --prefix=/opt/nuttxenv/usr --enable-mconf --disable-gconf --disable-qconf --disable-shared --disable-nconf
           make install
           ls /opt/nuttxenv/usr
+          ls /opt/nuttxenv/usr/bin
 
       # - name: Install genromfs
         # run: |
