@@ -64,6 +64,10 @@ jobs:
           make install
           ls /opt/nuttxenv/usr
           ls /opt/nuttxenv/usr/bin
+          cp /opt/nuttxenv/usr/bin/kconfig-conf.exe /usr/bin
+          cp /opt/nuttxenv/usr/bin/kconfig-mconf.exe /usr/bin
+          cp /opt/nuttxenv/usr/bin/kconfig-tweak /usr/bin
+          # cp /opt/nuttxenv/usr/bin/genromfs.exe /usr/bin
 
       # - name: Install genromfs
         # run: |
@@ -76,9 +80,9 @@ jobs:
       - name: Copy NXTOOL GENROMFS and clean source files
         run: |
           echo 'Copy NXTOOL GENROMFS and clean source files'
-          cp /opt/nuttxenv/usr/bin/kconfig-conf.exe /usr/bin
-          cp /opt/nuttxenv/usr/bin/kconfig-mconf.exe /usr/bin
-          cp /opt/nuttxenv/usr/bin/kconfig-tweak /usr/bin
+          # cp /opt/nuttxenv/usr/bin/kconfig-conf.exe /usr/bin
+          # cp /opt/nuttxenv/usr/bin/kconfig-mconf.exe /usr/bin
+          # cp /opt/nuttxenv/usr/bin/kconfig-tweak /usr/bin
           # cp /opt/nuttxenv/usr/bin/genromfs.exe /usr/bin
           # rm -rf nuttx-tools genromfs-0.5.2
 
