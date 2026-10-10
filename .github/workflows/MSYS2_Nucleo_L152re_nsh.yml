@@ -9,8 +9,8 @@ on:
     paths:
       - '.github/workflows/MSYS2_Nucleo_L152re_nsh.yml'
 env:
-   ARM_URL: https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/
-   ARM_NAME: arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
+   ARM_URL: https://developer.arm.com/-/media/Files/downloads/gnu/13.2.rel1/binrel/
+   ARM_NAME: arm-gnu-toolchain-13.2.Rel1-mingw-w64-i686-arm-none-eabi
 
 jobs:
   nuttx-msys2:
@@ -19,7 +19,7 @@ jobs:
       run:
         shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: msys2/setup-msys2@66cd2cce69caa17b53920067426061ca1de3a884 # v2.32.0
         with:
           msystem: MSYS
@@ -28,6 +28,8 @@ jobs:
             base-devel
             gcc
             gperf
+            automake
+            autoconf
             git
             python3
             ncurses-devel
@@ -35,61 +37,62 @@ jobs:
             zip
             tio
             zlib-devel
+            u-boot-tools
             cmake
             ninja
-            python-pip 
+            python-pip
             vim
-            curl
+            genromfs
         
       - name: pip3 install
         run: |
           echo 'pip3 install'
           uname
+          python3 -m venv --system-site-packages /usr/local
           pip3 install --root-user-action=ignore --no-cache-dir pyelftools cxxfilt kconfiglib
 
       - name: Install kconfig-frontends
         run: |
           echo 'Install kconfig-frontends'
-          curl -L https://bitbucket.org/nuttx/tools/get/master.tar.gz -o nuttx-tools.tar.gz
-          mkdir nuttx-tools
-          tar xvzf nuttx-tools.tar.gz --strip-components=1 -C nuttx-tools
+          git clone --depth 1 https://github.com/patacongo/tools nuttx-tools
           cd nuttx-tools/kconfig-frontends
-          ./configure --prefix=/opt/nuttxenv/usr --enable-mconf --disable-gconf --disable-qconf --disable-shared --disable-nconf
+          ./configure --prefix=/opt/nuttxenv/usr \
+          --disable-kconfig --disable-nconf --disable-qconf \
+          --disable-gconf --disable-mconf --disable-static \
+          --disable-shared --disable-L10n
+          # ./configure --prefix=/opt/nuttxenv/usr --enable-mconf --disable-gconf --disable-qconf --disable-shared --disable-nconf
           make install
-          
-      - name: Install genromfs
-        run: |
-          echo 'Install genromfs'
-          cd nuttx-tools
-          tar xzf genromfs-0.5.2.tar.gz
-          cd genromfs-0.5.2
-          make install PREFIX=/opt/nuttxenv
+          ls /opt/nuttxenv/usr
+          ls /opt/nuttxenv/usr/bin
+
+      # - name: Install genromfs
+        # run: |
+          # echo 'Install genromfs'
+          # cd nuttx-tools
+          # tar xzf genromfs-0.5.2.tar.gz
+          # cd genromfs-0.5.2
+          # make install PREFIX=/opt/nuttxenv
 
       - name: Copy NXTOOL GENROMFS and clean source files
         run: |
           echo 'Copy NXTOOL GENROMFS and clean source files'
           cp /opt/nuttxenv/usr/bin/kconfig-conf.exe /usr/bin
-          cp /opt/nuttxenv/usr/bin/kconfig-mconf.exe /usr/bin
+          # cp /opt/nuttxenv/usr/bin/kconfig-mconf.exe /usr/bin
           cp /opt/nuttxenv/usr/bin/kconfig-tweak /usr/bin
-          cp /opt/nuttxenv/usr/bin/genromfs.exe /usr/bin
-          rm -rf nuttx-tools genromfs-0.5.2
+          # cp /opt/nuttxenv/usr/bin/genromfs.exe /usr/bin
+          # rm -rf nuttx-tools genromfs-0.5.2
           ls -a
       - name: Install arm toolchain for Windows
         run: |
-           ## curl -L https://developer.arm.com/-/media/Files/downloads/gnu/12.3.rel1/binrel/arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip -o arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
-           ## unzip -qo arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi.zip
-           ## cp -ar arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi/* /opt/nuttxenv/usr
-           ## rm -rf arm-gnu-toolchain-12.3.rel1-mingw-w64-i686-arm-none-eabi
-           
            curl -L ${{ env.ARM_URL }}${{ env.ARM_NAME }}.zip -o ${{ env.ARM_NAME }}.zip
            unzip -qo ${{ env.ARM_NAME }}.zip
            mkdir -p /opt/nuttxenv/usr
-          
+
            cp -ar ${{ env.ARM_NAME }}/* /opt/nuttxenv/usr
            rm -rf ${{ env.ARM_NAME }}
-           rm ${{ env.ARM_NAME }}.zip           
-           ls -a /opt/nuttxenv/usr
-           
+           rm ${{ env.ARM_NAME }}.zip
+           ## ls -a /opt/nuttxenv/usr
+
       - name: Create PATH environment arm support script
         run: |
            mkdir -p nuttxenv
@@ -102,22 +105,21 @@ jobs:
         run: |
           echo 'Checkout Source Files'
           mkdir nuttxspace
-          ls -a
+          ## ls -a
           cd nuttxspace
-          git clone https://github.com/apache/incubator-nuttx nuttx
-          git clone https://github.com/apache/incubator-nuttx-apps apps
-          
-          cd nuttx
-          ls -a
+          git clone --depth 1 https://github.com/apache/nuttx.git nuttx
+          git clone --depth 1 https://github.com/apache/nuttx-apps.git apps
+          ## cd nuttx
+          ## ls -a
 
       - name: Build
         run: |
           echo 'Build'
           source nuttxenv/arm
-          
+
           ## export PATH=$PATH:/opt/nuttxenv/usr/bin
-          env
-          
+          ## env
+
           ## Move to nuttx
           cd nuttxspace/nuttx
           ls -a
@@ -125,12 +127,12 @@ jobs:
           ## Show the GCC version
           arm-none-eabi-gcc --version
           arm-none-eabi-c++ --version
-          
+
           ## Configure the build
           ./tools/configure.sh -g nucleo-l152re:nsh
-          
+
           mkdir nuttxmsys2
-          
+
           ## Preserve the build config
           cp .config nuttxmsys2/nuttx.config
 
@@ -139,29 +141,29 @@ jobs:
 
           ## Show the size
           arm-none-eabi-size nuttx
-        
+
           ## Dump the disassembly to nuttx.S
           arm-none-eabi-objdump \
           -t -S --demangle --line-numbers --wide \
           nuttx \
           >nuttx.S \
           2>&1
-          
-          ls -a
-          
+
+          ## ls -a
+
           cp nuttx nuttxmsys2/nuttx
           cp nuttx.bin nuttxmsys2/nuttx.bin
           cp nuttx.S nuttxmsys2/nuttx.S
           cp nuttx.hex nuttxmsys2/nuttx.hex
 
           zip -r msys2_nucleo_l152re_nsh.zip nuttxmsys2
-          
+
       - name: Get Current Date
         id: date
         run: echo "date=$(date +'%Y-%m-%d')" >> $GITHUB_OUTPUT
 
       - name: Publish the GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: msys2-nucleo-L152re-nsh-${{ steps.date.outputs.date }}
           draft: false
@@ -169,4 +171,3 @@ jobs:
           generate_release_notes: false
           files: |
             nuttxspace/nuttx/msys2_nucleo_l152re_nsh.zip
-          
